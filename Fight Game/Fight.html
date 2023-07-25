@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Two Player Fighting Game</title>
+</head>
+<body>
+  <script>
+    const characters = [
+      "Ryu", "Ken", "E. Honda", "Chun-Li", "Blanka", "Zangief",
+      "Guile", "Dhalsim", "Balrog", "Vega", "Sagat", "M. Bison"
+    ];
+
+    const actions = [
+      "Punch", "Kick", "Hadoken", "Jump", "Special Attack"
+    ];
+
+    let firstPlayerCharacter;
+    let secondPlayerCharacter;
+
+    function getRandomCharacter() {
+      return characters[Math.floor(Math.random() * characters.length)];
+    }
+
+    function getRandomAction() {
+      return actions[Math.floor(Math.random() * actions.length)];
+    }
+
+    function performAction(player, action) {
+      let damage = 0;
+      switch (action) {
+        case "Punch":
+        case "Kick":
+          damage = 10;
+          break;
+        case "Hadoken":
+          if (player === 1) {
+            actions.splice(actions.indexOf("Hadoken"), 1);
+          }
+          damage = 15;
+          break;
+        case "Special Attack":
+          damage = 30;
+          break;
+        default:
+          break;
+      }
+      return damage;
+    }
+
+    function checkWinner(firstPlayerHealth, secondPlayerHealth) {
+      if (firstPlayerHealth <= 0 && secondPlayerHealth <= 0) {
+        return "It's a tie!";
+      } else if (firstPlayerHealth <= 0) {
+        return `Player 2 wins with ${secondPlayerHealth}% health remaining!`;
+      } else if (secondPlayerHealth <= 0) {
+        return `Player 1 wins with ${firstPlayerHealth}% health remaining!`;
+      }
+      return null;
+    }
+
+    function playRound() {
+      const firstPlayerAction = prompt(`Player 1 (${firstPlayerCharacter}) - Select your action: ${actions.join(", ")}`);
+      const secondPlayerAction = getRandomAction();
+
+      let firstPlayerDamage = performAction(1, firstPlayerAction);
+      let secondPlayerDamage = performAction(2, secondPlayerAction);
+
+      if (firstPlayerAction && !actions.includes(firstPlayerAction)) {
+        alert(`Invalid action selected for Player 1. A random action will be chosen.`);
+        firstPlayerDamage = performAction(1, getRandomAction());
+      }
+
+      if (secondPlayerDamage === 15 && secondPlayerAction === "Jump") {
+        secondPlayerDamage = 0;
+      }
+
+      const firstPlayerHealth = 100 - secondPlayerDamage;
+      const secondPlayerHealth = 100 - firstPlayerDamage;
+
+      alert(`Player 1 (${firstPlayerCharacter}) used ${firstPlayerAction} and inflicted ${firstPlayerDamage}% damage.\nPlayer 2 (${secondPlayerCharacter}) used ${secondPlayerAction} and inflicted ${secondPlayerDamage}% damage.`);
+
+      const winner = checkWinner(firstPlayerHealth, secondPlayerHealth);
+      if (winner) {
+        alert(winner);
+        return;
+      }
+
+      // Continue to the next round
+      playRound();
+    }
+
+    // Main game flow
+    alert("Welcome to the Two Player Fighting Game!\nSelect your character for Player 1.");
+
+    const selectedCharacter = prompt(`Available Characters: ${characters.join(", ")}`);
+    if (characters.includes(selectedCharacter)) {
+      firstPlayerCharacter = selectedCharacter;
+    } else {
+      alert("Invalid character selected for Player 1. A random character will be chosen.");
+      firstPlayerCharacter = getRandomCharacter();
+    }
+
+    secondPlayerCharacter = getRandomCharacter();
+
+    alert(`Player 1: ${firstPlayerCharacter}\nPlayer 2: ${secondPlayerCharacter}\n\nLet the fight begin!`);
+
+    playRound();
+  </script>
+</body>
+</html>
